@@ -34,6 +34,12 @@ if(len(FileIN) <= 0):
 #set canvas
 c1 = ROOT.TCanvas('c1', 'c1', 0, 0, 1067, 750)
 
+ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetTitleFont(132, '')
+ROOT.gStyle.SetTitleFont(132, 'XYZ')
+ROOT.gStyle.SetLabelFont(132, '')
+ROOT.gStyle.SetLabelFont(132, 'XYZ')
+
 c1.SetFillColor(0)
 c1.SetGridx()
 c1.SetGridy()
@@ -54,7 +60,7 @@ fLin = [ROOT.TF1() for i in xrange(len(FileIN))]
 MinX = 0.0
 MaxX = 21.0
 MinY = 1.0e-1
-MaxY = 14.0
+MaxY = 100.0
 
 #for latex
 Xtxt = 1.0
@@ -65,7 +71,7 @@ Latex = ROOT.TLatex()
 
 for i in xrange(len(FileIN)):
 
-    XArray, YArray, ErrYArray = numpy.loadtxt(FileIN[i], skiprows = 1, unpack = True)
+    XArray, YArray, ErrYArray = numpy.loadtxt(FileIN[i], skiprows = 0, comments = '#', unpack = True)
     ErrXArray = [0.0 for j in xrange(len(XArray))]
 
     gArray[i] = ROOT.TGraphErrors(len(XArray), numpy.array(XArray), numpy.array(YArray),
