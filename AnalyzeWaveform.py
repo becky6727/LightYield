@@ -113,8 +113,12 @@ DateToTime = numpy.array([3600.0, 60.0, 1.0, 1.0e-3, 1.0e-6, 1.0e-9])
 N = 0
 
 #range of Waveform
-MinGate = 96
-MaxGate = 288
+MinGate = 96 #30nsec
+MaxGate = 288 #90nsec
+
+#range of tail region
+MinTail = 64 #20nsec
+MaxTail = MaxGate
 
 #Amplitude of sample for PGA
 #NSample = 160 #50nsec
@@ -268,7 +272,7 @@ for line in (fin):
     DecayT[0] = fFit.GetParameter(1)
 
     #calc tail region and its ratio to ADC
-    Tail[0] = (numpy.abs(numpy.sum(WaveArray[PeakIndex+MinGate:PeakIndex+MaxGate])))
+    Tail[0] = (numpy.abs(numpy.sum(WaveArray[PeakIndex+MinTail:PeakIndex+MaxTail])))
     Ratio[0] = Tail[0]/ADC[0]
     
     #get peak hight of waveform
