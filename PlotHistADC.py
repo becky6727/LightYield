@@ -67,7 +67,7 @@ c1.SetGridy()
 MinADC = 0.0
 MaxADC = numpy.array([tr[i].GetMaximum('ADC') for i in range(len(tr))]).min()
 
-ADCBinWidth = 1.0
+ADCBinWidth = 0.50
 NofADCBin = (int)((MaxADC - MinADC)/ADCBinWidth)
 
 hADC = []
@@ -96,7 +96,7 @@ CutPGA = ROOT.TCut('(-PeakHeight)/(-AmpSample) > %2.2f' %(CutValue[0]))
 CutDWT = ROOT.TCut('Power2/Power1 > %2.2f' %(CutValue[1]))
 
 #fot fitting function        
-MinFit = 25.0
+MinFit = 20.0
 MaxFit = 100.0
 
 fFit = [ROOT.TF1() for i in xrange(len(tr))]
@@ -190,7 +190,7 @@ for i in range(len(hADC)):
         fFit[i].SetParameter(2, Par2)
         fFit[i].SetParameter(3, Par3)
 
-        fFit[i].SetParLimits(3, 0.0, 1.0e+6)
+        #fFit[i].SetParLimits(3, 0.0, 1.0e+6)
         
         if(isCut):
             hADC_Cut[i].Fit('fFit_%d' %(i), 'R0')
