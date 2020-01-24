@@ -2,13 +2,15 @@ import os, sys, time
 import ROOT
 import numpy
 import argparse
+import collections
 
 parser = argparse.ArgumentParser(description = 'options')
 
 parser.add_argument('-i',
                     type = str,
                     dest = 'FileIN',
-                    nargs = '+',
+                    #nargs = '+',
+                    default = None,
                     help = 'input root files')
 
 parser.add_argument('-p',
@@ -27,9 +29,19 @@ FileIN = args.FileIN
 isFigOut = args.isFigOut
 isFit = args.isFit
 
-if(len(FileIN) <= 0):
+if(FileIN == None):
     sys.exit()
     pass
+
+#read data
+PCArray, EArray, QArray, ErrQArray = numpy.loadtxt(FileIN, skiprows = 0, comments = '#', unpack = True)
+ErrPCArray = [0.0 for j in xrange(len(PCArray))]
+
+SourceType = collections.Counter(EArray)
+SourceType = SourceType.keys()
+SourceType.sort()
+
+#print SourceType
 
 #set canvas
 c1 = ROOT.TCanvas('c1', 'c1', 0, 0, 1067, 750)
@@ -46,21 +58,16 @@ c1.SetGridy()
 #c1.SetLogy()
 
 #initialize
-XArray = []
-YArray = []
-ErrXArray = []
-ErrYArray = []
+gArray = [ROOT.TGraphErrors() for i in xrange(len(SourceType))]
 
-gArray = [ROOT.TGraphErrors() for i in xrange(len(FileIN))]
-
-fFit = [ROOT.TF1() for i in xrange(len(FileIN))]
-fLin = [ROOT.TF1() for i in xrange(len(FileIN))]
+fFit = [ROOT.TF1() for i in xrange(len(gArray))]
+fLin = [ROOT.TF1() for i in xrange(len(gArray))]
 
 #for graph
 MinX = 0.0
-MaxX = 21.0
-MinY = 1.0e-1
-MaxY = 100.0
+MaxX = 18.0
+MinY = 0.0
+MaxY = 80.0
 
 #for latex
 Xtxt = 1.0
@@ -69,20 +76,23 @@ TxtMargin = 0.5
 
 Latex = ROOT.TLatex()
 
-for i in xrange(len(FileIN)):
+for i in xrange(len(gArray)):
 
-    XArray, YArray, ErrYArray = numpy.loadtxt(FileIN[i], skiprows = 0, comments = '#', unpack = True)
-    ErrXArray = [0.0 for j in xrange(len(XArray))]
-
+    XArray = numpy.array(PCArray)[numpy.where(EArray == SourceType[i])]
+    ErrXArray = numpy.array(ErrPCArray)[numpy.where(EArray == SourceType[i])]
+    YArray = numpy.array(QArray)[numpy.where(EArray == SourceType[i])]
+    ErrYArray = numpy.array(ErrQArray)[numpy.where(EArray == SourceType[i])]
+    
     gArray[i] = ROOT.TGraphErrors(len(XArray), numpy.array(XArray), numpy.array(YArray),
                                   numpy.array(ErrXArray), numpy.array(ErrYArray))
 
-    gArray[i].SetTitle('PC Concentration Dependence of Charge at Compton edge')
-    gArray[i].GetXaxis().SetTitle('PC Concentration [%]')
+    #gArray[i].SetTitle('PC Concentration Dependence of Charge at Compton edge')
+    gArray[i].SetTitle('')
+    gArray[i].GetXaxis().SetTitle('PC Concentration [wt%]')
     gArray[i].GetXaxis().SetTitleFont(132)
     gArray[i].GetXaxis().SetTitleOffset(1.1)
     gArray[i].GetXaxis().SetLabelFont(132)
-    gArray[i].GetYaxis().SetTitle('Charge')
+    gArray[i].GetYaxis().SetTitle('Charge [pC]')
     gArray[i].GetYaxis().SetTitleFont(132)
     gArray[i].GetYaxis().SetTitleOffset(0.8)
     gArray[i].GetYaxis().SetLabelFont(132)
@@ -90,12 +100,12 @@ for i in xrange(len(FileIN)):
     gArray[i].SetMinimum(MinY)
     gArray[i].SetMaximum(MaxY)
     
-    gArray[i].SetMarkerColor(2*i + 2)
-    gArray[i].SetMarkerStyle(8)
-    gArray[i].SetMarkerSize(.8)
-    gArray[i].SetLineColor(2*i + 2)
-    gArray[i].SetLineWidth(3)
-
+    gArray[i].SetMarkerColor(i + 2)
+    gArray[i].SetMarkerSize(1.2)
+    gArray[i].SetMarkerStyle(20 + i)
+    gArray[i].SetLineColor(i + 2)
+    gArray[i].SetLineWidth(2)        
+    
     if(i != 0):
         gArray[i].Draw('psame')
     else:
@@ -121,7 +131,7 @@ for i in xrange(len(FileIN)):
         fLin[i].SetParameter(0, Par0)
         fLin[i].SetParameter(1, Par1)
 
-        fLin[i].SetLineColor(2*i + 2)
+        fLin[i].SetLineColor(i + 2)
         fLin[i].SetLineStyle(3)
 
         fLin[i].Draw('same')
@@ -132,7 +142,7 @@ for i in xrange(len(FileIN)):
     Latex.SetTextSize(.025)
     Latex.SetTextColor(2*i + 2)
 
-    Latex.DrawLatex(Xtxt, Ytxt, FileIN[i])
+    #Latex.DrawLatex(Xtxt, Ytxt, FileIN[i])
     
     Ytxt = Ytxt - TxtMargin
 
