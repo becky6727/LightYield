@@ -41,6 +41,10 @@ for i in range(len(RFile)):
 c1 = ROOT.TCanvas('c1', 'c1', 0, 0, 1200, 1000)
 
 ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetTitleFont(132, '')
+ROOT.gStyle.SetTitleFont(132, 'XYZ')
+ROOT.gStyle.SetLabelFont(132, '')
+ROOT.gStyle.SetLabelFont(132, 'XYZ')
 
 c1.SetFillColor(0)
 #c1.SetGridx()
@@ -63,8 +67,8 @@ TailBin = 0.01
 NofTailBin = int((MaxTail - MinTail)/TailBin)
 
 MinRatio = 0.0
-MaxRatio = 0.3
-RatioBin = 0.003
+MaxRatio = 0.07
+RatioBin = 0.001
 NofRatioBin = int((MaxRatio - MinRatio)/RatioBin)
 
 hRatiovsTail = []
@@ -148,6 +152,12 @@ for i in range(len(hRatio)):
     hRatio[i].SetMarkerSize(.6)
     hRatio[i].SetLineColor(i + 2)
     hRatio[i].SetLineWidth(3)
+
+    #normalize by number of entries
+    Norm = hRatio[i].GetEntries()
+
+    hRatio[i].Sumw2()
+    hRatio[i].Scale(1.0/Norm)
 
     if(i != 0):
         hRatio[i].Draw('histsame')
@@ -270,6 +280,12 @@ for i in range(len(hPeak)):
     hPeak[i].SetLineColor(i + 2)
     hPeak[i].SetLineWidth(3)
 
+    #normalize by number of entries
+    Norm = hPeak[i].GetEntries()
+
+    hPeak[i].Sumw2()
+    hPeak[i].Scale(1.0/Norm)
+    
     if(i != 0):
         hPeak[i].Draw('histsame')
     else:
@@ -381,6 +397,12 @@ for i in range(len(hMetric)):
     hMetric[i].SetMarkerSize(.6)
     hMetric[i].SetLineColor(i + 2)
     hMetric[i].SetLineWidth(3)
+
+    #normalize by number of entries
+    Norm = hMetric[i].GetEntries()
+
+    hMetric[i].Sumw2()
+    hMetric[i].Scale(1.0/Norm)
 
     if(i != 0):
         hMetric[i].Draw('histsame')
