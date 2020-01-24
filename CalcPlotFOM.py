@@ -142,12 +142,12 @@ for i in xrange(len(hRatio)):
         Sig = hRatio[i].Integral(j + 1, NofRatioBin)
         Noise = hRatioBG.Integral(j + 1, NofRatioBin)
 
-        if(Noise > 0.0):
-            tmp_Ratio[j] = Sig/numpy.sqrt(Noise) 
+        if(Sig + Noise > 0.0):
+            tmp_Ratio[j] = Sig/numpy.sqrt(Noise + Sig) 
         else:
             tmp_Ratio[j] = 0.0
             pass
-
+        
         RatioArray[j] = MinRatio + (j + 1)* RatioBin
         
         #for debug
@@ -171,8 +171,8 @@ for i in xrange(len(hPeak)):
         Sig = hPeak[i].Integral(j + 1, NofPeakRatioBin)
         Noise = hPeakBG.Integral(j + 1, NofPeakRatioBin)
 
-        if(Noise > 0.0):
-            tmp_PGA[j] = Sig/numpy.sqrt(Noise) 
+        if(Sig + Noise > 0.0):
+            tmp_PGA[j] = Sig/numpy.sqrt(Noise + Sig) 
         else:
             tmp_PGA[j] = 0.0
             pass
@@ -200,12 +200,12 @@ for i in xrange(len(hMetric)):
         Sig = hMetric[i].Integral(j + 1, NofMetricBin)
         Noise = hMetricBG.Integral(j + 1, NofMetricBin)
 
-        if(Noise > 0.0):
-            tmp_DWT[j] = Sig/numpy.sqrt(Noise) 
+        if(Sig + Noise > 0.0):
+            tmp_DWT[j] = Sig/numpy.sqrt(Noise + Sig) 
         else:
             tmp_DWT[j] = 0.0
             pass
-
+        
         MetricArray[j] = MinMetric + (j + 1)* MetricBin
 
         #for debug
@@ -260,7 +260,7 @@ gFOM_Ratio.GetYaxis().SetTitleOffset(0.5)
 gFOM_Ratio.GetYaxis().SetLabelFont(132)
 gFOM_Ratio.GetXaxis().SetLimits(MinRatio, MaxRatio)
 gFOM_Ratio.SetMinimum(MinFOM)
-gFOM_Ratio.SetMaximum(MaxFOM)
+gFOM_Ratio.SetMaximum(1.1*numpy.max(FOM_Ratio[0]))
 
 gFOM_Ratio.SetMarkerColor(2)
 gFOM_Ratio.SetMarkerStyle(8)
@@ -307,7 +307,7 @@ gFOM_PGA.GetYaxis().SetTitleOffset(0.5)
 gFOM_PGA.GetYaxis().SetLabelFont(132)
 gFOM_PGA.GetXaxis().SetLimits(MinPeakRatio, MaxPeakRatio)
 gFOM_PGA.SetMinimum(MinFOM)
-gFOM_PGA.SetMaximum(MaxFOM)
+gFOM_PGA.SetMaximum(1.1*numpy.max(FOM_PGA[0]))
 
 gFOM_PGA.SetMarkerColor(2)
 gFOM_PGA.SetMarkerStyle(8)
@@ -339,7 +339,7 @@ gFOM_DWT.GetYaxis().SetTitleOffset(0.5)
 gFOM_DWT.GetYaxis().SetLabelFont(132)
 gFOM_DWT.GetXaxis().SetLimits(MinMetric, MaxMetric)
 gFOM_DWT.SetMinimum(MinFOM)
-gFOM_DWT.SetMaximum(MaxFOM)
+gFOM_DWT.SetMaximum(1.1*numpy.max(FOM_DWT[0]))
 
 gFOM_DWT.SetMarkerColor(2)
 gFOM_DWT.SetMarkerStyle(8)
