@@ -18,3 +18,5 @@ old/PlotTailRatio.py
 old/PlotTriggerRate.py
 old/Waveform2PeakCheck.py
 references/root_make_tree.cc
+.DS_Store
+*.dat~
